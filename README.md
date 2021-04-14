@@ -16,15 +16,14 @@
 
 ## Introduction
 
-*Type chasing* is a situation you find yourself in when trying to come up with a solution to a, usually polymorphic, function's definition in Haskell. Having worked out a function's signature, all that remains is to write the function's implementation driven by those types (but instead, you're driven to tears).
+*Type chasing* is a situation you find yourself in when trying to come up with a solution to a, usually polymorphic, function's definition in Haskell. Having worked out a function's signature, all that remains is to write the function's implementation driven by those types (driven to tears, by types be driven).
 
-Consulting Curry-Howard as a help find the right function definition. That is, just like *modus ponens ≅ function application*, so **implication introduction ≅ lambda introduction**. The problem is the exact place in code where a lambda is introduced, e.g. `\f -> ...` (assumption) and the place where it is applied e.g. `... f x` (implication introduction).
-
+Ask Curry-Howard for help finding the right function definition. That is, just like *modus ponens ≅ function application*, so **implication introduction ≅ lambda introduction**. The problem is the exact place in code where a lambda is introduced, e.g. `\f -> ...` (assumption) and the place where it is applied e.g. `... f x` (implication introduction).
 
 
 ## The setup
 
-This is the exact content of my editor that has frustrated me for too long.
+This was the exact setup that cause me a great amount of grief: I was trying to implement this (just for kicks), arbitrarily named, `kapp` function above, which is actually based on the `ContT`'s instance for Applicative class' `<*>` method, from the `transformers` package.
 
 ```hs
 kapp :: (((a -> b) -> r) -> r)    -- ContT r m (a -> b)
@@ -32,7 +31,7 @@ kapp :: (((a -> b) -> r) -> r)    -- ContT r m (a -> b)
      -> ((b -> r) -> r)           -- ContT r m b
 ```
 
-I was trying to implement this, arbitrarily named, `kapp` function above, which is actually based on the `ContT`'s instance for Applicative class' `<*>` method, found in the `transformers` package here: https://hackage.haskell.org/package/transformers-0.5.6.2/docs/src/Control.Monad.Trans.Cont.html#line-168
+The `transformers` source: https://hackage.haskell.org/package/transformers-0.5.6.2/docs/src/Control.Monad.Trans.Cont.html#line-168
 
 ```hs
 -- (from transformers package)
@@ -46,11 +45,17 @@ instance Applicative (ContT r m) where
   f <*> v = ContT $ \ c -> runContT f $ \ g -> runContT v (c . g)
 ```
 
-Apart from the type parameter `m`, the two implementation should be fairly the same, save for ContT's re/un/wrapping. Staring some more at `kmap` but failing to find a way forward, I've switched to staring at the solution (`<*>` above). It was particularly frustrating how they knew to introduce that lambda there but apply it way over there. And the other lambda as well. It was exactly these lambda introductions that reminded me of the inference rules in propositional logic, specifically implication introduction, so I've decided to Curry-Howard the shit out of this thing.
+Apart from the type parameter `m`, the two implementation should be very similar, save for `ContT`'s re/un/wrapping. Staring some more at `kmap` but failing to find a way forward, I've switched to staring at the solution (`<*>` above).
+
+It was particularly frustrating how they knew exactly where to introduce that lambda and where to use it. The other lambda as well. But then these lambda introductions reminded me of logic, so I've decided to Curry-Howard the shit out of this thing.
 
 ## Logical derivation
 
-In proposition (and other) logic, inference rule of implication introduction states that if you assume a `p` and work your way to a `q`, then you can conclude `p => q`. Instead of comming up with an example for implication introduction, it's better if we return to the problem at hand and demonstrate it there.
+In proposition (and other) logic, inference rule of *implication introduction* states that if you assume a `p` and work your way to a `q`, then you can conclude `p => q`.
+
+Implication introduction is also split in two parts: first something is assumed (like a lambda introduction) taking you into a subproof where you're free to derive more formulas, but at some point you have to discharge that assumption, which is the point that an implication is introduced.
+
+Instead of comming up with an example for implication introduction, it's better if we return to the problem at hand and demonstrate it there.
 
 ```hs
 kapp :: (((a -> b) -> r) -> r)    -- h
@@ -72,6 +77,7 @@ The 3 args are the 3 propositions that are given, and we need to come up with th
 
 The derivation diagram:
 
+```
 ┌──┬──────────────────────┬────────────────────────┐
 │1 │ ((a -> b) -> r) -> r │ proposition            │
 │2 │ (a -> r) -> r        │ proposition            │
@@ -86,6 +92,7 @@ The derivation diagram:
 │10│ (a -> b)¹ -> r       │ ->i 4-9 (discharging²) │
 │11│ r                    │ MP 1,11                │
 └──┴──────────────────────┴────────────────────────┘
+```
 
 We need to come up with the conclusion `r`. Lines 1-3 are given. So we start the solution on line 4.
 4. We assume `(a -> b)`

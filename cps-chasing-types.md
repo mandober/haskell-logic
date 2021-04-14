@@ -4,6 +4,7 @@
 
 *Type chasing* is a situation you find yourself in when trying to come up with a solution to a, usually polymorphic, function's definition in Haskell. Having worked out a function's signature, all that remains is to write the function's implementation driven by those types. But instead, you're driven to tears.
 
+
 ## The setup
 
 This is the exact content of my editor that has frustrated me for too long.
@@ -54,6 +55,7 @@ The 3 args are the 3 propositions that are given, and we need to come up with th
 
 The derivation diagram:
 
+```
 ┌──┬──────────────────────┬────────────────────────┐
 │1 │ ((a -> b) -> r) -> r │ proposition            │
 │2 │ (a -> r) -> r        │ proposition            │
@@ -68,6 +70,7 @@ The derivation diagram:
 │10│ (a -> b)¹ -> r       │ ->i 4-9 (discharging²) │
 │11│ r                    │ MP 1,11                │
 └──┴──────────────────────┴────────────────────────┘
+```
 
 We need to come up with the conclusion `r`. Lines 1-3 are given. So we start the solution on line 4.
 4. We assume `(a -> b)`
