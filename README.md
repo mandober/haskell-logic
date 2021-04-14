@@ -1,2 +1,1 @@
-# haskell-logic
-Logical derivations in Haskell
+# Logical derivations in Haskell
