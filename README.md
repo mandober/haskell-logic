@@ -3,18 +3,23 @@
 - type-driven function implementations
 - type-driven function definitions
 - signature-forced function definition
-- switching doamins: using inference rules to infer definition
+- switching domains: using inference rules to infer definition
 - definition as a set of forced steps
 - implication introduction <=> lambda introduction
-- possibility of automatic definition given a function's signature (and provided the definition doesn't need a *function ex Prelude-ina*)
+- possibility of automatic derivation
 
+
+★ The main question is how to use logical derivation to automate implementations of function definitions¹. Ok. Then at least how to, having successfully derived logical solution, translate it into code, into a series of steps that show (more clearly then below) where precisely to introduce a lambda (corresponding to an assumption) and where to use it (implication introduction).
+
+(¹) provided the definition avoids calling *function ex Preludina*, it's gotta be a properly honest function, using only the given arguments and what it can assume/introduce.
 
 
 ## Introduction
 
 *Type chasing* is a situation you find yourself in when trying to come up with a solution to a, usually polymorphic, function's definition in Haskell. Having worked out a function's signature, all that remains is to write the function's implementation driven by those types (but instead, you're driven to tears).
 
-Consulting Curry-Howard iso as a help to find the right function definition. That is, just like *modus ponens* ≅ function application, so is implication introduction connected with a lambda introduction. The problem is the exact place in code where a lambda is introduced, e.g. `\f -> ...` (the assumption) versus the place where it is applied (->I), e.g. `... f x`.
+Consulting Curry-Howard as a help find the right function definition. That is, just like *modus ponens ≅ function application*, so **implication introduction ≅ lambda introduction**. The problem is the exact place in code where a lambda is introduced, e.g. `\f -> ...` (assumption) and the place where it is applied e.g. `... f x` (implication introduction).
+
 
 
 ## The setup
