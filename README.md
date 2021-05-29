@@ -1,5 +1,11 @@
 # Chasing types in Haskell
 
+Nicely rendered article:
+https://dev.to/mandober/chasing-types-in-haskell-55cn
+
+
+### Sporadic paragraphs
+
 - type-driven function implementations
 - type-driven function definitions
 - signature-forced function definition
